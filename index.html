@@ -55,10 +55,9 @@
   #voteView>.sub{padding:0 4px;margin-bottom:16px}
   body:has(#voteView:not(.hide)) header{padding-bottom:52px}
   body:has(#voteView:not(.hide)) .logo,body:has(#voteView:not(.hide)) header p{display:none}
-  .opsi{position:relative;display:flex;flex-direction:column;min-height:calc(100vh - 170px);min-height:calc(100svh - 170px);margin:0 0 18px;overflow:hidden;background:#fff;border:3px solid #F7E3E1;border-radius:26px;cursor:pointer;scroll-snap-align:start;box-shadow:0 12px 30px rgba(158,17,24,.12);transition:border-color .15s,box-shadow .15s}
-  .opsi .foto{display:block;width:100%;height:0;flex:1 1 0;min-height:240px;object-fit:cover;background:#F3E3E1}
-  .opsi .foto.kosong{display:flex;align-items:center;justify-content:center;height:auto;font-size:110px;font-weight:800;color:#fff;background:linear-gradient(160deg,#E8474D,var(--tua))}
-  .opsi b{display:block;padding:18px 20px 0;font-size:27px;font-weight:800;line-height:1.2;letter-spacing:-.01em}
+  .opsi{position:relative;display:flex;flex-direction:column;margin:0 0 18px;overflow:hidden;background:#fff;border:3px solid #F7E3E1;border-radius:26px;cursor:pointer;scroll-snap-align:start;box-shadow:0 12px 30px rgba(158,17,24,.12);transition:border-color .15s,box-shadow .15s}
+  .opsi .foto{display:block;width:100%;aspect-ratio:1/1;object-fit:cover;background:#F3E3E1}
+  .opsi b{display:block;padding:18px 70px 0 20px;font-size:27px;font-weight:800;line-height:1.2;letter-spacing:-.01em}
   .opsi .visi{padding:8px 20px 22px;white-space:pre-line;font-size:15.5px}
   .opsi input[type=radio]{-webkit-appearance:none;appearance:none;position:absolute;top:14px;right:14px;z-index:2;width:40px;height:40px;margin:0;padding:0;background:rgba(255,255,255,.88);border:3px solid #fff;border-radius:50%;box-shadow:0 3px 10px rgba(0,0,0,.3)}
   .opsi input[type=radio]:checked{background:var(--merah) var(--cek) center/22px no-repeat}
@@ -92,15 +91,6 @@
   .pojok{position:relative;display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px}
   .chip{display:flex;align-items:center;justify-content:center;padding:5px 9px;background:#fff;border-radius:14px;box-shadow:0 4px 12px rgba(0,0,0,.22)}
   .chip img{display:block;height:36px;width:auto}
-  /* foto kandidat (admin) */
-  .sr{position:absolute;width:1px;height:1px;opacity:0;overflow:hidden;pointer-events:none}
-  .fotoPilih{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:6px 0 4px}
-  .btnFile{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:10px 20px;font-weight:700;color:var(--tua);background:#fff;border:2px solid var(--merah);border-radius:14px;cursor:pointer}
-  .btnFile:active{transform:scale(.97)}
-  #kFotoPrev{width:64px;height:64px;object-fit:cover;border-radius:14px;border:2px solid var(--garis)}
-  .fotoNama{font-size:14px;color:var(--abu)}
-  .baris .nm{display:flex;align-items:center;gap:12px}
-  .baris .mini{width:44px;height:44px;flex:none;object-fit:cover;border-radius:12px}
 </style>
 </head>
 <body>
@@ -175,14 +165,6 @@
       <input id="kNama" placeholder="Nama kandidat">
       <label class="lbl" for="kVisi">Visi dan misi</label>
       <textarea id="kVisi" rows="3" placeholder="Visi dan misi singkat"></textarea>
-      <span class="lbl">Foto kandidat</span>
-      <div class="fotoPilih">
-        <img id="kFotoPrev" class="hide" alt="Pratinjau foto">
-        <label class="btnFile" for="kFoto">Pilih foto</label>
-        <input id="kFoto" type="file" accept="image/*" class="sr">
-        <span id="kFotoNama" class="fotoNama">Belum ada foto (boleh dikosongkan)</span>
-      </div>
-      <div id="kFotoErr" class="err"></div>
       <button onclick="tambahKandidat()">Tambah kandidat</button>
       <div id="adminKandidat"></div>
     </div>
@@ -218,6 +200,11 @@
   const db = firebase.database();
   const auth = firebase.auth();
 
+  // Foto paslon berdasarkan nomor urut (kandidat ke-1, ke-2, dst). Paslon tanpa foto dikosongkan.
+  const FOTO_PASLON = {
+    3: "data:image/jpeg;base64,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"
+  };
+
   const $ = id => document.getElementById(id);
   const VIEWS = ['loginView','voteView','doneView','adminLogin','adminView'];
   let currentNisn = null;
@@ -230,44 +217,6 @@
     if(cls) e.className = cls;
     return e;
   }
-
-  /* ---------- FOTO KANDIDAT ---------- */
-  const fotoValid = f => typeof f === 'string' && f.indexOf('data:image/') === 0;
-  let fotoBaru = '', fotoProses = false;
-  function kecilkanFoto(file){
-    return new Promise((ok, gagal) => {
-      const fr = new FileReader();
-      fr.onload = () => {
-        const im = new Image();
-        im.onload = () => {
-          const s = Math.min(1, 640 / Math.max(im.width, im.height));
-          const c = document.createElement('canvas');
-          c.width = Math.round(im.width * s); c.height = Math.round(im.height * s);
-          c.getContext('2d').drawImage(im, 0, 0, c.width, c.height);
-          ok(c.toDataURL('image/jpeg', 0.8));
-        };
-        im.onerror = gagal; im.src = fr.result;
-      };
-      fr.onerror = gagal; fr.readAsDataURL(file);
-    });
-  }
-  $('kFoto').addEventListener('change', async e => {
-    const f = e.target.files && e.target.files[0];
-    $('kFotoErr').textContent = '';
-    if(!f) return;
-    if(!/^image\//.test(f.type)){ $('kFotoErr').textContent = 'File harus berupa gambar (JPG atau PNG).'; e.target.value = ''; return; }
-    fotoProses = true; $('kFotoNama').textContent = 'Memproses foto...';
-    try{
-      fotoBaru = await kecilkanFoto(f);
-      $('kFotoPrev').src = fotoBaru; $('kFotoPrev').classList.remove('hide');
-      $('kFotoNama').textContent = f.name;
-    }catch(err){
-      fotoBaru = ''; $('kFotoPrev').classList.add('hide');
-      $('kFotoNama').textContent = 'Belum ada foto (boleh dikosongkan)';
-      $('kFotoErr').textContent = 'Foto tidak bisa dibaca. Coba pilih foto lain.';
-    }
-    fotoProses = false;
-  });
 
   /* ---------- PEMILIH ---------- */
   async function loginPemilih(){
@@ -295,17 +244,16 @@
     const data = (await db.ref('kandidat').once('value')).val() || {};
     const box = $('daftarKandidat');
     box.innerHTML = '';
-    Object.entries(data).forEach(([id, k]) => {
+    Object.entries(data).forEach(([id, k], i) => {
       const label = el('label', undefined, 'opsi');
       const radio = document.createElement('input');
       radio.type = 'radio'; radio.name = 'k'; radio.value = id; radio.dataset.nama = k.nama;
       label.appendChild(radio);
-      if(fotoValid(k.foto)){
+      const foto = FOTO_PASLON[i + 1];
+      if(foto){
         const im = document.createElement('img');
-        im.className = 'foto'; im.alt = 'Foto ' + k.nama; im.src = k.foto;
+        im.className = 'foto'; im.alt = 'Foto ' + k.nama; im.src = foto;
         label.appendChild(im);
-      }else{
-        label.appendChild(el('div', (k.nama || '?').trim().charAt(0).toUpperCase(), 'foto kosong'));
       }
       label.appendChild(el('b', k.nama));
       label.appendChild(el('div', k.visi || '', 'visi'));
@@ -387,14 +335,7 @@
     box.innerHTML = '';
     Object.entries(kandidatData).forEach(([id, k]) => {
       const row = el('div', undefined, 'baris');
-      const nm = el('span', undefined, 'nm');
-      if(fotoValid(k.foto)){
-        const im = document.createElement('img');
-        im.className = 'mini'; im.alt = ''; im.src = k.foto;
-        nm.appendChild(im);
-      }
-      nm.appendChild(document.createTextNode(k.nama));
-      row.appendChild(nm);
+      row.appendChild(el('span', k.nama));
       const b = el('button', 'Hapus', 'kecil alt');
       b.onclick = () => { if(confirm('Hapus ' + k.nama + '?')) db.ref('kandidat/' + id).remove(); };
       row.appendChild(b);
@@ -409,13 +350,9 @@
   function tambahKandidat(){
     const nama = $('kNama').value.trim();
     if(!nama){ alert('Nama kandidat wajib diisi.'); return; }
-    if(fotoProses){ alert('Foto masih diproses, tunggu sebentar.'); return; }
     const dataBaru = { nama: nama, visi: $('kVisi').value.trim() };
-    if(fotoBaru) dataBaru.foto = fotoBaru;
     db.ref('kandidat').push(dataBaru);
     $('kNama').value = ''; $('kVisi').value = '';
-    fotoBaru = ''; $('kFoto').value = ''; $('kFotoPrev').classList.add('hide');
-    $('kFotoNama').textContent = 'Belum ada foto (boleh dikosongkan)';
   }
 
   async function tambahPemilih(){
