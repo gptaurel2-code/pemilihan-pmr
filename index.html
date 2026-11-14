@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pemilihan Ketua PMR</title>
+<style>
+  body{font-family:sans-serif;margin:0;background:#f5f5f5;color:#222}
+  header{background:#c62828;color:#fff;padding:14px;text-align:center;font-weight:bold;font-size:18px}
+  main{padding:16px;max-width:480px;margin:auto}
+  .card{background:#fff;border-radius:8px;padding:14px;margin-bottom:12px;box-shadow:0 1px 3px rgba(0,0,0,.15)}
+  input,textarea{width:100%;padding:10px;margin:6px 0;box-sizing:border-box;font-size:16px}
+  button{background:#c62828;color:#fff;border:0;padding:12px;font-size:16px;border-radius:6px;width:100%;margin-top:6px}
+  button.alt{background:#666}
+  button.kecil{width:auto;padding:6px 10px;font-size:14px}
+  .hide{display:none}
+  .err{color:#c62828;font-size:14px;min-height:18px}
+  .ok{color:#2e7d32;font-size:14px}
+  .opsi{display:block;border:1px solid #ccc;border-radius:6px;padding:10px;margin:8px 0}
+  .opsi input{width:auto;margin-right:8px}
+  .visi{font-size:14px;color:#555;margin-top:4px}
+  .bar{background:#ddd;border-radius:4px;overflow:hidden;height:16px;margin:4px 0 10px}
+  .bar div{background:#c62828;height:100%}
+  .baris{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:6px 0}
+</style>
+</head>
+<body>
+<header>Pemilihan Ketua PMR</header>
+<main>
+
+  <!-- LOGIN PEMILIH -->
+  <section id="loginView" class="card">
+    <h3>Masuk untuk memilih</h3>
+    <input id="nisn" inputmode="numeric" maxlength="10" placeholder="Masukkan NISN (10 angka)">
+    <div id="loginErr" class="err"></div>
+    <button onclick="loginPemilih()">Masuk</button>
+    <button class="alt" onclick="show('adminLogin')">Masuk sebagai admin</button>
+  </section>
+
+  <!-- HALAMAN MEMILIH -->
+  <section id="voteView" class="card hide">
+    <h3 id="sapa"></h3>
+    <p>Pilih satu kandidat:</p>
+    <div id="daftarKandidat"></div>
+    <button onclick="kirimSuara()">Kirim suara</button>
+  </section>
+
+  <!-- SELESAI -->
+  <section id="doneView" class="card hide">
+    <h3>Terima kasih!</h3>
+    <p>Suara kamu sudah tercatat.</p>
+    <button onclick="keluar()">Selesai</button>
+  </section>
+
+  <!-- LOGIN ADMIN -->
+  <section id="adminLogin" class="card hide">
+    <h3>Login admin</h3>
+    <input id="adminEmail" type="email" placeholder="Email admin">
+    <input id="adminPass" type="password" placeholder="Password">
+    <div id="adminErr" class="err"></div>
+    <button onclick="loginAdmin()">Masuk</button>
+    <button class="alt" onclick="show('loginView')">Kembali</button>
+  </section>
+
+  <!-- PANEL ADMIN -->
+  <section id="adminView" class="hide">
+    <div class="card">
+      <h3>Status pemilihan</h3>
+      <p>Saat ini: <b id="statusTeks">-</b></p>
+      <button id="btnStatus" onclick="ubahStatus()">-</button>
+    </div>
+
+    <div class="card">
+      <h3>Hasil suara</h3>
+      <div id="hasil"></div>
+      <p id="partisipasi"></p>
+    </div>
+
+    <div class="card">
+      <h3>Tambah kandidat</h3>
+      <input id="kNama" placeholder="Nama kandidat">
+      <textarea id="kVisi" rows="3" placeholder="Visi dan misi singkat"></textarea>
+      <button onclick="tambahKandidat()">Tambah kandidat</button>
+      <div id="adminKandidat"></div>
+    </div>
+
+    <div class="card">
+      <h3>Tambah daftar pemilih</h3>
+      <p class="visi">Satu baris satu siswa, format: NISN,Nama. NISN yang sudah ada dilewati.</p>
+      <textarea id="daftarPemilih" rows="6" placeholder="0012345678,Budi Santoso"></textarea>
+      <button onclick="tambahPemilih()">Simpan pemilih</button>
+      <div id="pemilihMsg" class="ok"></div>
+    </div>
+
+    <button class="alt" onclick="keluar()">Keluar</button>
+  </section>
+
+</main>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script>
+  // GANTI dengan config dari Firebase Console (Project settings > Your apps > Web app)
+  const firebaseConfig = {
+    apiKey: "AIzaSyCv2BXu8uJSXOWvN301jBgR6uWjl1hT0ws",
+    authDomain: "pemilihan-pmr.firebaseapp.com",
+    databaseURL: "https://pemilihan-pmr-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "pemilihan-pmr",
+    storageBucket: "pemilihan-pmr.firebasestorage.app",
+    messagingSenderId: "37246849891",
+    appId: "1:37246849891:web:c3d465b8bee6b8ea6a3956"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+  const auth = firebase.auth();
+
+  const $ = id => document.getElementById(id);
+  const VIEWS = ['loginView','voteView','doneView','adminLogin','adminView'];
+  let currentNisn = null;
+  let kandidatData = {}, suaraData = {}, pemilihData = {}, statusNow = 'tutup';
+
+  function show(id){ VIEWS.forEach(v => $(v).classList.toggle('hide', v !== id)); }
+  function el(tag, text, cls){
+    const e = document.createElement(tag);
+    if(text !== undefined) e.textContent = text;
+    if(cls) e.className = cls;
+    return e;
+  }
+
+  /* ---------- PEMILIH ---------- */
+  async function loginPemilih(){
+    const nisn = $('nisn').value.trim();
+    const err = $('loginErr');
+    err.textContent = '';
+    if(!/^\d{10}$/.test(nisn)){ err.textContent = 'NISN harus 10 angka.'; return; }
+    try{
+      await auth.signInAnonymously();
+      const status = (await db.ref('pengaturan/status').once('value')).val();
+      if(status !== 'buka'){ err.textContent = 'Pemilihan belum dibuka atau sudah ditutup.'; return; }
+      const snap = await db.ref('pemilih/' + nisn).once('value');
+      if(!snap.exists()){ err.textContent = 'NISN tidak terdaftar.'; return; }
+      if(snap.val().sudah){ err.textContent = 'NISN ini sudah memilih.'; return; }
+      currentNisn = nisn;
+      $('sapa').textContent = 'Halo, ' + (snap.val().nama || nisn);
+      await muatKandidat();
+      show('voteView');
+    }catch(e){
+      err.textContent = 'Gagal terhubung. Cek koneksi internet.';
+    }
+  }
+
+  async function muatKandidat(){
+    const data = (await db.ref('kandidat').once('value')).val() || {};
+    const box = $('daftarKandidat');
+    box.innerHTML = '';
+    Object.entries(data).forEach(([id, k]) => {
+      const label = el('label', undefined, 'opsi');
+      const radio = document.createElement('input');
+      radio.type = 'radio'; radio.name = 'k'; radio.value = id; radio.dataset.nama = k.nama;
+      label.appendChild(radio);
+      label.appendChild(el('b', k.nama));
+      label.appendChild(el('div', k.visi || '', 'visi'));
+      box.appendChild(label);
+    });
+    if(!Object.keys(data).length) box.appendChild(el('p', 'Belum ada kandidat.'));
+  }
+
+  async function kirimSuara(){
+    const pilih = document.querySelector('input[name=k]:checked');
+    if(!pilih){ alert('Pilih salah satu kandidat.'); return; }
+    if(!confirm('Yakin memilih ' + pilih.dataset.nama + '? Pilihan tidak bisa diubah.')) return;
+    try{
+      // transaction: hanya satu HP yang bisa menandai NISN ini sudah memilih
+      const res = await db.ref('pemilih/' + currentNisn + '/sudah')
+        .transaction(v => v === true ? undefined : true);
+      if(!res.committed){ alert('NISN ini sudah memilih.'); show('loginView'); return; }
+      await db.ref('suara').push({
+        kandidat: pilih.value,
+        waktu: firebase.database.ServerValue.TIMESTAMP
+      });
+      show('doneView');
+    }catch(e){
+      alert('Gagal mengirim suara. Coba lagi.');
+    }
+  }
+
+  function keluar(){
+    auth.signOut().finally(() => location.reload());
+  }
+
+  /* ---------- ADMIN ---------- */
+  async function loginAdmin(){
+    const err = $('adminErr');
+    err.textContent = '';
+    try{
+      await auth.signInWithEmailAndPassword($('adminEmail').value.trim(), $('adminPass').value);
+      mulaiAdmin();
+      show('adminView');
+    }catch(e){
+      err.textContent = 'Email atau password salah.';
+    }
+  }
+
+  function mulaiAdmin(){
+    db.ref('pengaturan/status').on('value', s => {
+      statusNow = s.val() || 'tutup';
+      $('statusTeks').textContent = statusNow === 'buka' ? 'DIBUKA' : 'DITUTUP';
+      $('btnStatus').textContent = statusNow === 'buka' ? 'Tutup pemilihan' : 'Buka pemilihan';
+    });
+    db.ref('kandidat').on('value', s => { kandidatData = s.val() || {}; renderAdmin(); });
+    db.ref('suara').on('value', s => { suaraData = s.val() || {}; renderAdmin(); });
+    db.ref('pemilih').on('value', s => { pemilihData = s.val() || {}; renderAdmin(); });
+  }
+
+  function renderAdmin(){
+    // hasil
+    const hitung = {};
+    Object.values(suaraData).forEach(s => { hitung[s.kandidat] = (hitung[s.kandidat] || 0) + 1; });
+    const total = Object.keys(suaraData).length;
+    const hasil = $('hasil');
+    hasil.innerHTML = '';
+    Object.entries(kandidatData).forEach(([id, k]) => {
+      const n = hitung[id] || 0;
+      const persen = total ? Math.round(n / total * 100) : 0;
+      hasil.appendChild(el('div', k.nama + ': ' + n + ' suara (' + persen + '%)'));
+      const bar = el('div', undefined, 'bar');
+      const isi = document.createElement('div');
+      isi.style.width = persen + '%';
+      bar.appendChild(isi);
+      hasil.appendChild(bar);
+    });
+    const jmlPemilih = Object.keys(pemilihData).length;
+    const sudah = Object.values(pemilihData).filter(p => p.sudah).length;
+    $('partisipasi').textContent = 'Sudah memilih: ' + sudah + ' dari ' + jmlPemilih + ' pemilih';
+
+    // daftar kandidat (untuk hapus)
+    const box = $('adminKandidat');
+    box.innerHTML = '';
+    Object.entries(kandidatData).forEach(([id, k]) => {
+      const row = el('div', undefined, 'baris');
+      row.appendChild(el('span', k.nama));
+      const b = el('button', 'Hapus', 'kecil alt');
+      b.onclick = () => { if(confirm('Hapus ' + k.nama + '?')) db.ref('kandidat/' + id).remove(); };
+      row.appendChild(b);
+      box.appendChild(row);
+    });
+  }
+
+  function ubahStatus(){
+    db.ref('pengaturan/status').set(statusNow === 'buka' ? 'tutup' : 'buka');
+  }
+
+  function tambahKandidat(){
+    const nama = $('kNama').value.trim();
+    if(!nama){ alert('Nama kandidat wajib diisi.'); return; }
+    db.ref('kandidat').push({ nama: nama, visi: $('kVisi').value.trim() });
+    $('kNama').value = ''; $('kVisi').value = '';
+  }
+
+  async function tambahPemilih(){
+    const baris = $('daftarPemilih').value.split('\n').map(b => b.trim()).filter(Boolean);
+    const data = {};
+    let dilewati = 0;
+    baris.forEach(b => {
+      const [nisn, ...sisa] = b.split(',');
+      const n = (nisn || '').trim();
+      if(!/^\d{10}$/.test(n) || pemilihData[n]){ dilewati++; return; }
+      data[n] = { nama: sisa.join(',').trim(), sudah: false };
+    });
+    try{
+      await db.ref('pemilih').update(data);
+      $('pemilihMsg').textContent = Object.keys(data).length + ' pemilih disimpan, ' + dilewati + ' dilewati.';
+      $('daftarPemilih').value = '';
+    }catch(e){
+      $('pemilihMsg').textContent = 'Gagal menyimpan. Coba lagi.';
+    }
+  }
+</script>
+</body>
+</html>
