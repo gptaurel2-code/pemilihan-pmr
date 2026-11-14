@@ -84,8 +84,7 @@
   #partisipasi:empty{display:none}
   .baris{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:0;padding:10px 0;border-top:1px solid #F4E3E1}
   .baris span{font-weight:600}
-  #adminKandidat{margin-top:14px}
-  #adminKandidat:empty{display:none}
+  #adminKandidat:empty::before{content:"Belum ada kandidat.";color:var(--abu);font-size:15px}
   #adminView>button.alt{margin-top:4px}
   /* logo pojok header */
   .pojok{position:relative;display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px}
@@ -160,13 +159,17 @@
     </div>
 
     <div class="card">
+      <h3>Daftar kandidat</h3>
+      <div id="adminKandidat"></div>
+    </div>
+
+    <div class="card">
       <h3>Tambah kandidat</h3>
       <label class="lbl" for="kNama">Nama kandidat</label>
       <input id="kNama" placeholder="Nama kandidat">
       <label class="lbl" for="kVisi">Visi dan misi</label>
       <textarea id="kVisi" rows="3" placeholder="Visi dan misi singkat"></textarea>
       <button onclick="tambahKandidat()">Tambah kandidat</button>
-      <div id="adminKandidat"></div>
     </div>
 
     <div class="card">
@@ -210,6 +213,11 @@
   let currentNisn = null;
   let kandidatData = {}, suaraData = {}, pemilihData = {}, statusNow = 'tutup';
 
+  // Nomor urut efektif tiap kandidat: pakai field "nomor" jika ada, kalau belum ada pakai urutan.
+  function daftarNomor(data){
+    return Object.entries(data).map(([id, k], i) => ({ id: id, nomor: Number(k.nomor) || i + 1 }));
+  }
+
   function show(id){ VIEWS.forEach(v => $(v).classList.toggle('hide', v !== id)); }
   function el(tag, text, cls){
     const e = document.createElement(tag);
@@ -244,12 +252,14 @@
     const data = (await db.ref('kandidat').once('value')).val() || {};
     const box = $('daftarKandidat');
     box.innerHTML = '';
-    Object.entries(data).forEach(([id, k], i) => {
+    const nomorDari = {};
+    daftarNomor(data).forEach(x => { nomorDari[x.id] = x.nomor; });
+    Object.entries(data).forEach(([id, k]) => {
       const label = el('label', undefined, 'opsi');
       const radio = document.createElement('input');
       radio.type = 'radio'; radio.name = 'k'; radio.value = id; radio.dataset.nama = k.nama;
       label.appendChild(radio);
-      const foto = FOTO_PASLON[i + 1];
+      const foto = FOTO_PASLON[nomorDari[id]];
       if(foto){
         const im = document.createElement('img');
         im.className = 'foto'; im.alt = 'Foto ' + k.nama; im.src = foto;
@@ -337,10 +347,30 @@
       const row = el('div', undefined, 'baris');
       row.appendChild(el('span', k.nama));
       const b = el('button', 'Hapus', 'kecil alt');
-      b.onclick = () => { if(confirm('Hapus ' + k.nama + '?')) db.ref('kandidat/' + id).remove(); };
+      b.onclick = () => hapusKandidat(id, k.nama);
       row.appendChild(b);
       box.appendChild(row);
     });
+  }
+
+  async function hapusKandidat(id, nama){
+    const jml = Object.values(suaraData).filter(s => s.kandidat === id).length;
+    const peringatan = jml ? '\n\nKandidat ini sudah mendapat ' + jml + ' suara. Suara itu tidak akan tampil lagi di hasil.' : '';
+    if(!confirm('Hapus ' + nama + '?' + peringatan)) return;
+    // satu pembaruan atomik di node kandidat: hapus kandidat + kunci nomor urut kandidat lain
+    // supaya foto paslon tidak bergeser setelah ada yang dihapus
+    const upd = {};
+    daftarNomor(kandidatData).forEach(x => {
+      if(x.id === id) upd[id] = null;
+      else if(!kandidatData[x.id].nomor) upd[x.id + '/nomor'] = x.nomor;
+    });
+    try{
+      await db.ref('kandidat').update(upd);
+    }catch(e){
+      alert(e && e.code === 'PERMISSION_DENIED'
+        ? 'Gagal menghapus: akun ini tidak punya izin menulis di database. Cek Firebase Rules.'
+        : 'Gagal menghapus. Cek koneksi internet lalu coba lagi.');
+    }
   }
 
   function ubahStatus(){
@@ -350,7 +380,8 @@
   function tambahKandidat(){
     const nama = $('kNama').value.trim();
     if(!nama){ alert('Nama kandidat wajib diisi.'); return; }
-    const dataBaru = { nama: nama, visi: $('kVisi').value.trim() };
+    const nomor = daftarNomor(kandidatData).reduce((m, x) => Math.max(m, x.nomor), 0) + 1;
+    const dataBaru = { nama: nama, visi: $('kVisi').value.trim(), nomor: nomor };
     db.ref('kandidat').push(dataBaru);
     $('kNama').value = ''; $('kVisi').value = '';
   }
