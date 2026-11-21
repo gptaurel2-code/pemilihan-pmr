@@ -361,24 +361,26 @@
     #voteView>h3,#voteView>.sub{text-align:center}
     #voteView>h3::after{margin-left:auto;margin-right:auto;background-position:center}
   }
-  /* ===== PENGUMUMAN PEMENANG: tata letak laptop / layar landscape (foto besar di kiri, info di kanan) ===== */
+  /* ===== PENGUMUMAN PEMENANG: tata letak laptop / layar landscape (pemenang di tengah, peringkat 2 & 3 di kiri-kanan) ===== */
   .kanan>*:not(.nama):not(.baris23){animation:masuk .8s var(--ease) both}
   .kanan>.angka{animation-delay:.6s}.kanan>.lain{animation-delay:1.9s}
   @media (min-width:600px) and (min-aspect-ratio:4/3){
-    .isi:has(>.kanan){width:min(1400px,95vw);display:flex;align-items:center;justify-content:center;gap:clamp(24px,5vw,110px);padding:52px 20px 14px;text-align:left}
-    .isi>.potret{flex:none;width:min(32vw,54vh);margin:calc(min(32vw,54vh)*.2) 0 0;--p:9px;border-radius:clamp(24px,5vh,40px)}
-    .isi>.potret img{border-radius:clamp(18px,4vh,30px);border-width:clamp(3px,.8vh,6px)}
-    .isi>.potret .mahkota{width:40%;top:auto;bottom:calc(100% - 8px)}
-    .kanan{flex:1;min-width:0;max-width:700px}
-    .kanan .selamat{font-size:clamp(.9rem,min(2vw,4.4vh),1.9rem)}
-    .kanan .nama{font-size:clamp(1.6rem,min(5.2vw,10vh),6rem);margin:.15em 0 .05em}
-    .kanan .angka{font-size:clamp(1.3rem,min(3.4vw,6.5vh),3.4rem)}
-    .kanan .angka small{font-size:clamp(.8rem,min(1.4vw,3vh),1.3rem)}
-    .kanan .baris23{justify-content:flex-start;gap:clamp(18px,3vw,56px);margin-top:min(4vh,40px)}
-    .kanan .peringkat{--w:min(19vh,14vw);width:min(17vw,250px)}
-    .kanan .peringkat .nm{font-size:clamp(.9rem,2.8vh,1.7rem)}
-    .kanan .peringkat .sk{font-size:clamp(.8rem,2.2vh,1.2rem)}
-    .kanan .lain{justify-content:flex-start}
+    .isi:has(>.kanan){--W:min(28vw,42vh);width:min(1400px,95vw);display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);
+      justify-content:center;align-content:center;align-items:start;column-gap:clamp(16px,3vw,64px);padding:48px 16px 12px;text-align:center}
+    .isi:has(>.kanan) .kanan,.isi:has(>.kanan) .baris23{display:contents}
+    .isi:has(>.kanan) .selamat{grid-column:2;grid-row:1;font-size:clamp(.85rem,min(1.8vw,4vh),1.6rem)}
+    .isi:has(>.kanan)>.potret{grid-column:2;grid-row:2;flex:none;width:var(--W);margin:calc(var(--W)*.22) auto 0;--p:9px;border-radius:clamp(24px,5vh,40px)}
+    .isi:has(>.kanan)>.potret img{border-radius:clamp(18px,4vh,30px);border-width:clamp(3px,.8vh,6px)}
+    .isi:has(>.kanan)>.potret .mahkota{width:40%;top:auto;bottom:calc(100% - 8px)}
+    .isi:has(>.kanan) .nama{grid-column:2;grid-row:3;margin:.15em 0 .02em;font-size:clamp(1.5rem,min(4.4vw,8vh),5rem)}
+    .isi:has(>.kanan) .angka{grid-column:2;grid-row:4;font-size:clamp(1.2rem,min(2.8vw,5vh),2.8rem)}
+    .isi:has(>.kanan) .angka small{font-size:clamp(.75rem,min(1.3vw,2.8vh),1.2rem)}
+    .isi:has(>.kanan) .lain{grid-column:1/-1;grid-row:5}
+    .isi:has(>.kanan) .peringkat{--w:calc(var(--W)/2);width:auto;max-width:100%;grid-row:2/span 3;align-self:center;margin-top:calc(var(--W)*.22)}
+    .isi:has(>.kanan) .peringkat:nth-child(1){grid-column:1;justify-self:end}
+    .isi:has(>.kanan) .peringkat:nth-child(2){grid-column:3;justify-self:start}
+    .isi:has(>.kanan) .peringkat .nm{font-size:clamp(.85rem,2.6vh,1.5rem)}
+    .isi:has(>.kanan) .peringkat .sk{font-size:clamp(.75rem,2.1vh,1.1rem)}
   }
 </style>
 
