@@ -231,7 +231,7 @@
   @keyframes kilau{to{transform:translateX(100%)}}
 
   /* pola sirkuit tipis di latar halaman pemilihan & admin */
-  body:has(#voteView:not(.hide))::before,body:has(#adminView:not(.hide))::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  body:has(#voteView:not(.hide))::before,body:has(#adminView:not(.hide))::before,body:has(#pantauView:not(.hide))::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
     background:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%27220%27%20height%3D%27220%27%20fill%3D%27none%27%20stroke%3D%27rgb%28168%2C17%2C27%29%27%20stroke-opacity%3D%27.11%27%20stroke-width%3D%271.2%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cpath%20d%3D%27M0%2040H60L76%2056H130M220%2090H170L154%20106V150L138%20166H90M40%20220V190L58%20172H110M0%20150H28L44%20134H70M180%200V30L196%2046H220%27%2F%3E%3Cg%20fill%3D%27rgb%28201%2C162%2C95%29%27%20stroke%3D%27none%27%20fill-opacity%3D%27.5%27%3E%3Ccircle%20cx%3D%27130%27%20cy%3D%2756%27%20r%3D%272.6%27%2F%3E%3Ccircle%20cx%3D%2790%27%20cy%3D%27166%27%20r%3D%272.6%27%2F%3E%3Ccircle%20cx%3D%27110%27%20cy%3D%27172%27%20r%3D%272.6%27%2F%3E%3Ccircle%20cx%3D%2770%27%20cy%3D%27134%27%20r%3D%272.6%27%2F%3E%3C%2Fg%3E%3Ccircle%20cx%3D%27154%27%20cy%3D%27128%27%20r%3D%274%27%20stroke%3D%27rgb%28201%2C162%2C95%29%27%20stroke-opacity%3D%27.45%27%2F%3E%3C%2Fsvg%3E") 0 0/220px 220px;animation:geser 50s linear infinite;
     -webkit-mask:linear-gradient(180deg,transparent 0,#000 180px,#000 calc(100% - 80px),transparent 100%);mask:linear-gradient(180deg,transparent 0,#000 180px,#000 calc(100% - 80px),transparent 100%)}
 
@@ -241,13 +241,49 @@
   #voteView>h3::after{content:"";display:block;width:132px;height:14px;margin-top:12px;background:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%27132%27%20height%3D%2714%27%20viewBox%3D%270%200%20132%2014%27%20fill%3D%27none%27%20stroke%3D%27rgb%28201%2C162%2C95%29%27%20stroke-width%3D%271.4%27%20stroke-linecap%3D%27round%27%3E%3Cpath%20d%3D%27M1%207H52M80%207H131%27%2F%3E%3Cpath%20d%3D%27M52%207L66%201L80%207L66%2013Z%27%2F%3E%3Ccircle%20cx%3D%2766%27%20cy%3D%277%27%20r%3D%272%27%20fill%3D%27rgb%28168%2C17%2C27%29%27%20stroke%3D%27none%27%2F%3E%3C%2Fsvg%3E") left center/contain no-repeat}
 
   /* admin */
-  #adminView .card{overflow:hidden;background:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%27210%27%20height%3D%27140%27%20viewBox%3D%270%200%20210%20140%27%20fill%3D%27none%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cg%20transform%3D%27translate%28210%20140%29%20scale%281%20-1%29%27%3E%3Cg%20stroke%3D%27rgb%28168%2C17%2C27%29%27%20stroke-opacity%3D%270.12%27%20stroke-width%3D%271.3%27%3E%3Cpath%20d%3D%27M210%2030H160L146%2044H108M210%2078H180L166%2092V118H122M210%20118H198L186%20106H150M0%200%27%2F%3E%3C%2Fg%3E%3Cg%20fill%3D%27rgb%28201%2C162%2C95%29%27%3E%3Ccircle%20cx%3D%27108%27%20cy%3D%2744%27%20r%3D%273%27%20fill-opacity%3D%27.8%27%2F%3E%3Ccircle%20cx%3D%27122%27%20cy%3D%27118%27%20r%3D%273%27%20fill-opacity%3D%27.8%27%2F%3E%3Ccircle%20cx%3D%27150%27%20cy%3D%27106%27%20r%3D%273%27%20fill-opacity%3D%27.8%27%2F%3E%3C%2Fg%3E%3Ccircle%20cx%3D%27146%27%20cy%3D%2768%27%20r%3D%275%27%20stroke%3D%27rgb%28201%2C162%2C95%29%27%20stroke-opacity%3D%27.7%27%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E") right top/190px auto no-repeat,#fff}
+  #adminView .card,#pantauView .card{overflow:hidden;background:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%27210%27%20height%3D%27140%27%20viewBox%3D%270%200%20210%20140%27%20fill%3D%27none%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cg%20transform%3D%27translate%28210%20140%29%20scale%281%20-1%29%27%3E%3Cg%20stroke%3D%27rgb%28168%2C17%2C27%29%27%20stroke-opacity%3D%270.12%27%20stroke-width%3D%271.3%27%3E%3Cpath%20d%3D%27M210%2030H160L146%2044H108M210%2078H180L166%2092V118H122M210%20118H198L186%20106H150M0%200%27%2F%3E%3C%2Fg%3E%3Cg%20fill%3D%27rgb%28201%2C162%2C95%29%27%3E%3Ccircle%20cx%3D%27108%27%20cy%3D%2744%27%20r%3D%273%27%20fill-opacity%3D%27.8%27%2F%3E%3Ccircle%20cx%3D%27122%27%20cy%3D%27118%27%20r%3D%273%27%20fill-opacity%3D%27.8%27%2F%3E%3Ccircle%20cx%3D%27150%27%20cy%3D%27106%27%20r%3D%273%27%20fill-opacity%3D%27.8%27%2F%3E%3C%2Fg%3E%3Ccircle%20cx%3D%27146%27%20cy%3D%2768%27%20r%3D%275%27%20stroke%3D%27rgb%28201%2C162%2C95%29%27%20stroke-opacity%3D%27.7%27%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E") right top/190px auto no-repeat,#fff}
   #adminView .card h3::before{width:13px;height:13px;border-radius:50%;background:radial-gradient(circle,var(--merah) 0 38%,var(--emas) 40%);box-shadow:0 0 0 4px rgba(201,162,95,.28)}
   #adminView .card h3{position:relative}
   .bar div{position:relative;overflow:hidden}
   .bar div::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.6),transparent);transform:translateX(-100%);animation:kilau 2.6s ease-in-out infinite}
   #statusTeks::before{box-shadow:0 0 0 0 rgba(168,17,27,.5);animation:denyutMerah 1.8s ease-out infinite}
   @keyframes denyutMerah{to{box-shadow:0 0 0 8px rgba(168,17,27,0)}}
+
+  /* ===== PANTAU PEMILIHAN ===== */
+  #pantauView .card{text-align:center}
+  .pn-status{display:inline-flex;align-items:center;gap:10px;padding:9px 18px 9px 15px;font-size:14.5px;font-weight:800;line-height:1.2;border-radius:999px;transition:background .4s,color .4s,box-shadow .4s}
+  .pn-status i{flex:none;width:11px;height:11px;border-radius:50%}
+  .pn-status.buka{color:#14583A;background:#E7F5EE;box-shadow:inset 0 0 0 1.5px rgba(30,122,82,.3)}
+  .pn-status.buka i{background:var(--hijau);animation:denyutHijau 1.7s ease-out infinite}
+  .pn-status.tutup{color:#8E0F15;background:#FDECEA;box-shadow:inset 0 0 0 1.5px rgba(168,17,27,.3)}
+  .pn-status.tutup i{background:var(--merah)}
+  .pn-status.belum{color:var(--emas-tua);background:var(--krem2);box-shadow:inset 0 0 0 1.5px rgba(201,162,95,.55)}
+  .pn-status.belum i{background:var(--emas)}
+  @keyframes denyutHijau{0%{box-shadow:0 0 0 0 rgba(30,122,82,.5)}100%{box-shadow:0 0 0 10px rgba(30,122,82,0)}}
+  @keyframes tambah{0%{transform:scale(1)}35%{transform:scale(1.14);color:var(--merah)}100%{transform:scale(1)}}
+
+  .pn-ring{position:relative;width:min(290px,76vw);aspect-ratio:1;margin:26px auto 14px}
+  .pn-ring svg{position:absolute;inset:0;width:100%;height:100%;transform:rotate(-90deg);overflow:visible}
+  .pn-ring circle{fill:none}
+  .pn-luar{stroke:var(--emas);stroke-width:1.6;stroke-dasharray:1.5 8;stroke-linecap:round;opacity:.85;transform-origin:center;transform-box:fill-box}
+  .pn-ring.hidup .pn-luar{animation:putar 70s linear infinite}
+  .pn-jalur{stroke:var(--krem2);stroke-width:15}
+  .pn-isi{stroke-width:15;stroke-linecap:round;stroke-dasharray:100;stroke-dashoffset:100;transition:stroke-dashoffset 1.9s var(--ease),opacity .3s;filter:drop-shadow(0 3px 6px rgba(168,17,27,.28))}
+  .pn-tengah{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 22%}
+  .pn-angka{font-family:var(--serif);font-size:clamp(64px,21vw,92px);font-weight:700;line-height:1;letter-spacing:-.04em;font-variant-numeric:tabular-nums;color:var(--tua)}
+  .pn-angka.tambah{animation:tambah .6s var(--ease)}
+  .pn-ket{margin-top:8px;font-size:14.5px;font-weight:700;line-height:1.3;color:var(--merah)}
+  .pn-dari{margin:0 0 20px;font-size:15px;font-weight:600;color:var(--abu)}
+  .pn-petak{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .pn-petak>div{padding:14px 10px 12px;background:var(--krem);border:1.5px solid var(--garis);border-radius:20px}
+  .pn-petak b{display:block;font-family:var(--serif);font-size:30px;font-weight:700;line-height:1.1;letter-spacing:-.02em;font-variant-numeric:tabular-nums;color:var(--tua)}
+  .pn-petak span{display:block;margin-top:4px;font-size:13px;font-weight:600;color:var(--abu)}
+  .pn-terakhir{display:flex;align-items:center;justify-content:center;gap:8px;margin:18px 0 0;font-size:13.5px;font-weight:600;color:var(--abu)}
+  .pn-terakhir svg{flex:none;width:16px;height:16px;color:var(--emas-tua)}
+  #pnCatatan{text-align:left}
+  .pn-aksi{display:flex;flex-direction:column}
+  .pn-aksi .sub{margin:0 0 6px}
+  .pn-aksi .kembali{order:2}
 
   /* ===== PANGGUNG PEMENANG ===== */
   #panggung{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;overflow:hidden;text-align:center;color:#fff;
@@ -342,6 +378,12 @@
   <!-- PANEL ADMIN -->
   <section id="adminView" class="hide">
     <div class="card">
+      <h3>Pantau pemilihan</h3>
+      <p class="sub" id="ringkasPantau">Memuat data...</p>
+      <button onclick="bukaPantau()">Lihat progres</button>
+    </div>
+
+    <div class="card">
       <h3>Status pemilihan</h3>
       <p>Saat ini: <b id="statusTeks">-</b></p>
       <button id="btnStatus" onclick="ubahStatus()">-</button>
@@ -404,6 +446,38 @@
     <button class="alt" onclick="keluar()">Keluar</button>
   </section>
 
+  <section id="pantauView" class="hide">
+    <div class="card">
+      <div id="pnStatus" class="pn-status belum"><i></i><span id="pnStatusTeks">Memuat...</span></div>
+      <div id="pnRing" class="pn-ring" role="img" aria-label="Progres siswa yang sudah memilih">
+        <svg viewBox="0 0 200 200" aria-hidden="true">
+          <defs><linearGradient id="pnGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#C9A25F"/><stop offset=".55" stop-color="#CF2630"/><stop offset="1" stop-color="#6B0A11"/></linearGradient></defs>
+          <circle class="pn-luar" cx="100" cy="100" r="97"/>
+          <circle class="pn-jalur" cx="100" cy="100" r="84"/>
+          <circle id="pnIsi" class="pn-isi" cx="100" cy="100" r="84" pathLength="100" stroke="url(#pnGrad)"/>
+        </svg>
+        <div class="pn-tengah">
+          <div id="pnAngka" class="pn-angka" aria-live="polite">0</div>
+          <div class="pn-ket">siswa telah memilih</div>
+        </div>
+      </div>
+      <p id="pnDari" class="pn-dari"></p>
+      <div class="pn-petak">
+        <div><b id="pnPersen">0%</b><span>partisipasi</span></div>
+        <div><b id="pnBelum">0</b><span>belum memilih</span></div>
+      </div>
+      <p class="pn-terakhir"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span id="pnTerakhirTeks"></span></p>
+      <div id="pnCatatan" class="ok"></div>
+    </div>
+
+    <div class="card pn-aksi">
+      <p id="pnPetunjuk" class="sub"></p>
+      <div id="errPantau" class="err"></div>
+      <button id="pnTombolStatus" onclick="ubahStatusPantau()">Tutup pemilihan</button>
+      <button id="pnTombolUmumkan" class="alt" onclick="umumkanPemenang('errPantau')">Umumkan pemenang</button>
+      <button class="alt kembali" onclick="show('adminView')">Kembali ke panel admin</button>
+    </div>
+  </section>
 </main>
 <div id="zoomBox" class="hide" role="dialog" aria-label="Poster paslon">
   <div class="zbar">
@@ -457,7 +531,7 @@
   };
 
   const $ = id => document.getElementById(id);
-  const VIEWS = ['loginView','voteView','doneView','adminLogin','adminView'];
+  const VIEWS = ['loginView','voteView','doneView','adminLogin','adminView','pantauView'];
   let currentNisn = null;
   let kandidatData = {}, suaraData = {}, pemilihData = {}, statusNow = 'tutup';
 
@@ -614,6 +688,7 @@
       statusNow = s.val() || 'tutup';
       $('statusTeks').textContent = statusNow === 'buka' ? 'DIBUKA' : 'DITUTUP';
       $('btnStatus').textContent = statusNow === 'buka' ? 'Tutup pemilihan' : 'Buka pemilihan';
+      renderPantau();
     });
     db.ref('kandidat').on('value', s => { kandidatData = s.val() || {}; renderAdmin(); });
     db.ref('suara').on('value', s => { suaraData = s.val() || {}; renderAdmin(); });
@@ -640,6 +715,8 @@
     const jmlPemilih = Object.keys(pemilihData).length;
     const sudah = Object.values(pemilihData).filter(p => p.sudah).length;
     $('partisipasi').textContent = 'Sudah memilih: ' + sudah + ' dari ' + jmlPemilih + ' pemilih';
+    $('ringkasPantau').textContent = jmlPemilih ? sudah + ' dari ' + jmlPemilih + ' siswa sudah memilih.' : 'Belum ada pemilih terdaftar.';
+    renderPantau();
 
     // daftar kandidat (untuk hapus)
     const box = $('adminKandidat');
@@ -682,7 +759,88 @@
   }
 
   function ubahStatus(){
-    db.ref('pengaturan/status').set(statusNow === 'buka' ? 'tutup' : 'buka');
+    return db.ref('pengaturan/status').set(statusNow === 'buka' ? 'tutup' : 'buka');
+  }
+
+  /* ---------- PANTAU PEMILIHAN ---------- */
+  let pnTimer = null;
+  // angka naik/turun perlahan dari nilai yang sedang tampil ke nilai baru
+  function animasiAngka(node, ke, akhiran){
+    akhiran = akhiran || '';
+    const dari = node._nilai || 0;
+    if(node._raf) cancelAnimationFrame(node._raf);
+    if(dari === ke){ node.textContent = ke + akhiran; node._nilai = ke; return; }
+    if(ke > dari && dari > 0){ node.classList.remove('tambah'); void node.offsetWidth; node.classList.add('tambah'); }
+    const t0 = performance.now(), dur = Math.min(1800, 700 + Math.abs(ke - dari) * 30);
+    (function langkah(t){
+      const q = Math.min(1, (t - t0) / dur), v = Math.round(dari + (ke - dari) * (1 - Math.pow(1 - q, 3)));
+      node.textContent = v + akhiran; node._nilai = v;
+      if(q < 1) node._raf = requestAnimationFrame(langkah);
+    })(t0);
+  }
+  function teksWaktu(w){
+    const d = Math.max(0, Date.now() - w) / 1000;
+    if(d < 10) return 'baru saja';
+    if(d < 60) return Math.floor(d) + ' detik lalu';
+    if(d < 3600) return Math.floor(d / 60) + ' menit lalu';
+    if(d < 86400) return Math.floor(d / 3600) + ' jam lalu';
+    return Math.floor(d / 86400) + ' hari lalu';
+  }
+  function renderTerakhir(){
+    if($('pantauView').classList.contains('hide')) return;
+    const w = Object.values(suaraData).reduce((m, x) => Math.max(m, Number(x.waktu) || 0), 0);
+    $('pnTerakhirTeks').textContent = w ? 'Suara terakhir masuk ' + teksWaktu(w) : 'Belum ada suara yang masuk';
+  }
+  function renderPantau(){
+    if($('pantauView').classList.contains('hide')) return;
+    const jml = Object.keys(pemilihData).length;
+    const sudah = Object.values(pemilihData).filter(x => x.sudah).length;
+    const pct = jml ? Math.min(100, sudah / jml * 100) : 0;
+    const persen = jml ? (sudah >= jml ? 100 : Math.min(99, Math.floor(pct))) : 0;
+    const buka = statusNow === 'buka', selesai = !buka && sudah > 0;
+    $('pnStatus').className = 'pn-status ' + (buka ? 'buka' : sudah ? 'tutup' : 'belum');
+    $('pnStatusTeks').textContent = buka ? 'Pemilihan sedang berlangsung' : sudah ? 'Pemilihan ditutup' : 'Pemilihan belum dibuka';
+    $('pnRing').classList.toggle('hidup', buka);
+    const isi = $('pnIsi');
+    isi.style.strokeDashoffset = 100 - pct;
+    isi.style.opacity = pct > 0 ? 1 : 0;
+    animasiAngka($('pnAngka'), sudah);
+    animasiAngka($('pnPersen'), persen, '%');
+    animasiAngka($('pnBelum'), Math.max(0, jml - sudah));
+    $('pnDari').textContent = jml ? 'dari ' + jml + ' siswa terdaftar' : 'Belum ada siswa terdaftar';
+    $('pnCatatan').textContent = jml && sudah >= jml
+      ? (buka ? 'Semua pemilih terdaftar sudah memilih. Pemilihan siap ditutup.' : 'Semua pemilih terdaftar sudah memilih.') : '';
+    renderTerakhir();
+    const ts = $('pnTombolStatus'), tu = $('pnTombolUmumkan');
+    ts.textContent = buka ? 'Tutup pemilihan' : sudah ? 'Buka kembali pemilihan' : 'Buka pemilihan';
+    ts.classList.toggle('alt', selesai); tu.classList.toggle('alt', !selesai);
+    ts.style.order = selesai ? 1 : 0; tu.style.order = selesai ? 0 : 1;
+    $('pnPetunjuk').textContent = buka
+      ? 'Tutup pemilihan setelah semua siswa selesai memilih, lalu umumkan pemenang.'
+      : sudah ? 'Pemilihan sudah ditutup, siswa tidak bisa memilih lagi. Pemenang siap diumumkan.'
+      : 'Buka pemilihan supaya siswa bisa mulai memilih.';
+  }
+  function bukaPantau(){
+    ['pnAngka','pnPersen','pnBelum'].forEach(id => {
+      const n = $(id);
+      if(n._raf) cancelAnimationFrame(n._raf);
+      n._nilai = 0; n.textContent = id === 'pnPersen' ? '0%' : '0';
+    });
+    const isi = $('pnIsi');
+    isi.style.strokeDashoffset = 100; isi.style.opacity = 0;
+    $('errPantau').textContent = '';
+    show('pantauView');
+    requestAnimationFrame(() => requestAnimationFrame(renderPantau));
+    if(!pnTimer) pnTimer = setInterval(renderTerakhir, 15000);
+  }
+  function ubahStatusPantau(){
+    const err = $('errPantau'); err.textContent = '';
+    if(statusNow === 'buka' && !confirm('Tutup pemilihan sekarang? Siswa yang belum memilih tidak akan bisa memilih lagi.')) return;
+    ubahStatus().catch(e => {
+      err.textContent = e && e.code === 'PERMISSION_DENIED'
+        ? 'Gagal mengubah status: akun ini tidak punya izin menulis di database. Cek Firebase Rules.'
+        : 'Gagal mengubah status. Cek koneksi internet lalu coba lagi.';
+    });
   }
 
   /* foto kandidat: ukuran asli dipertahankan (tidak dipotong), diperkecil, disimpan sebagai teks base64 di database */
@@ -853,9 +1011,9 @@
     const s=a.createBufferSource(), g=a.createGain(), hp=a.createBiquadFilter();
     s.buffer=b; hp.type='highpass'; hp.frequency.value=900; g.gain.value=v; s.connect(hp); hp.connect(g); g.connect(pgMaster); s.start(t);
   }
-  function pgGulungan(){
-    const t0=pgAudio().currentTime+.05; let t=0, i=0;
-    while(t<2.95){ pgDrum(t0+t,.15+.5*(t/3)); t+=Math.max(.045,.2-i*.012); i++; }
+  function pgGulungan(dur){
+    const t0=pgAudio().currentTime+.05; let t=0;
+    while(t<dur-.05){ pgDrum(t0+t,.15+.5*(t/dur)); t+=Math.max(.05,.3-.028*t); }
   }
   function pgDentum(t){
     const a=pgAudio(), o=a.createOscillator(), g=a.createGain();
@@ -907,8 +1065,8 @@
     if(document.fullscreenElement) document.exitFullscreen().catch(()=>{});
   }
 
-  function umumkanPemenang(){
-    const err=$('errPemenang'); err.textContent='';
+  function umumkanPemenang(errId){
+    const err=$(typeof errId==='string'?errId:'errPemenang'); err.textContent='';
     const hitung={}, nomor={};
     Object.values(suaraData).forEach(s=>{ hitung[s.kandidat]=(hitung[s.kandidat]||0)+1; });
     daftarNomor(kandidatData).forEach(x=>{ nomor[x.id]=x.nomor; });
@@ -926,8 +1084,10 @@
     pgBersih(); pgAktif=true;
     const urut=pgData.urut, total=pgData.total, juara=urut.filter(x=>x.n===urut[0].n), isi=$('pgIsi');
     const hitung=n=>{ isi.innerHTML=''; isi.appendChild(el('div',String(n),'hitung')); isi.appendChild(el('p','Pemenang Ketua PMR akan diumumkan...','selamat')); };
-    hitung(3); if(juara.length===1) pgGulungan();
-    pgWaktu.push(setTimeout(()=>hitung(2),1000),setTimeout(()=>hitung(1),2000),setTimeout(()=>pgTampil(urut,total,juara),3000));
+    const DETIK=10;
+    hitung(DETIK); if(juara.length===1) pgGulungan(DETIK);
+    for(let i=1;i<DETIK;i++) pgWaktu.push(setTimeout(()=>hitung(DETIK-i),i*1000));
+    pgWaktu.push(setTimeout(()=>pgTampil(urut,total,juara),DETIK*1000));
     pgRaf=requestAnimationFrame(pgGambar);
   }
   function pgTampil(urut,total,juara){
