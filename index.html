@@ -361,25 +361,24 @@
     #voteView>h3,#voteView>.sub{text-align:center}
     #voteView>h3::after{margin-left:auto;margin-right:auto;background-position:center}
   }
-  /* ===== PENGUMUMAN PEMENANG: tata letak laptop (foto besar di kiri, info di kanan) ===== */
+  /* ===== PENGUMUMAN PEMENANG: tata letak laptop / layar landscape (foto besar di kiri, info di kanan) ===== */
   .kanan>*:not(.nama):not(.baris23){animation:masuk .8s var(--ease) both}
   .kanan>.angka{animation-delay:.6s}.kanan>.lain{animation-delay:1.9s}
-  @media (min-width:900px){
-    .isi:has(>.kanan){width:min(1400px,94vw);display:flex;align-items:center;justify-content:center;gap:clamp(40px,6vw,120px);padding:64px 28px 28px;text-align:left}
-    .isi>.potret{flex:none;width:min(30vw,50vh);margin:min(7vh,70px) 0 0;--p:10px;border-radius:40px}
-    .isi>.potret img{border-radius:30px;border-width:6px}
-    .isi>.potret .mahkota{width:40%;top:auto;bottom:calc(100% - 10px)}
-    .kanan{flex:1;min-width:0;max-width:680px}
-    .kanan .selamat{font-size:clamp(1.1rem,2vw,1.9rem)}
-    .kanan .nama{font-size:clamp(2.4rem,min(5.2vw,10vh),6rem);margin:.18em 0 .08em}
-    .kanan .angka{font-size:clamp(1.8rem,min(3.4vw,6.5vh),3.4rem)}
-    .kanan .angka small{font-size:clamp(.9rem,1.4vw,1.3rem)}
-    .kanan .baris23{justify-content:flex-start;gap:clamp(24px,3vw,56px);margin-top:min(5vh,44px)}
-    .kanan .peringkat{--w:min(15vh,12vw);width:min(17vw,250px)}
-    .kanan .peringkat .nm{font-size:clamp(1.05rem,2.6vh,1.7rem)}
-    .kanan .peringkat .sk{font-size:clamp(.9rem,2vh,1.2rem)}
+  @media (min-width:600px) and (min-aspect-ratio:4/3){
+    .isi:has(>.kanan){width:min(1400px,95vw);display:flex;align-items:center;justify-content:center;gap:clamp(24px,5vw,110px);padding:52px 20px 14px;text-align:left}
+    .isi>.potret{flex:none;width:min(32vw,54vh);margin:calc(min(32vw,54vh)*.2) 0 0;--p:9px;border-radius:clamp(24px,5vh,40px)}
+    .isi>.potret img{border-radius:clamp(18px,4vh,30px);border-width:clamp(3px,.8vh,6px)}
+    .isi>.potret .mahkota{width:40%;top:auto;bottom:calc(100% - 8px)}
+    .kanan{flex:1;min-width:0;max-width:700px}
+    .kanan .selamat{font-size:clamp(.9rem,min(2vw,4.4vh),1.9rem)}
+    .kanan .nama{font-size:clamp(1.6rem,min(5.2vw,10vh),6rem);margin:.15em 0 .05em}
+    .kanan .angka{font-size:clamp(1.3rem,min(3.4vw,6.5vh),3.4rem)}
+    .kanan .angka small{font-size:clamp(.8rem,min(1.4vw,3vh),1.3rem)}
+    .kanan .baris23{justify-content:flex-start;gap:clamp(18px,3vw,56px);margin-top:min(4vh,40px)}
+    .kanan .peringkat{--w:min(19vh,14vw);width:min(17vw,250px)}
+    .kanan .peringkat .nm{font-size:clamp(.9rem,2.8vh,1.7rem)}
+    .kanan .peringkat .sk{font-size:clamp(.8rem,2.2vh,1.2rem)}
     .kanan .lain{justify-content:flex-start}
-    #panggung .ctrl button.kecil{min-height:38px;font-size:14px}
   }
 </style>
 
