@@ -382,6 +382,18 @@
     .isi:has(>.kanan) .peringkat .nm{font-size:clamp(.85rem,2.6vh,1.5rem)}
     .isi:has(>.kanan) .peringkat .sk{font-size:clamp(.75rem,2.1vh,1.1rem)}
   }
+  /* ===== DAFTAR NISN PEMILIH ===== */
+  #cariPemilih{width:100%;margin:6px 0 12px}
+  .pm-list{max-height:min(60vh,520px);overflow-y:auto;border:1px solid var(--garis);border-radius:16px;background:#fff}
+  .pm-row{display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid var(--garis)}
+  .pm-row:last-child{border-bottom:0}
+  .pm-nisn{font-variant-numeric:tabular-nums;font-weight:700;letter-spacing:.04em;flex:none}
+  .pm-nama{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--abu)}
+  .pm-st{flex:none;font-size:12px;font-weight:700;padding:4px 10px;border-radius:999px;background:#f3ece4;color:#7a6a58}
+  .pm-st.sudah{background:#e4f3e6;color:#1f6b2f}
+  .pm-hapus{flex:none;width:auto;margin:0;padding:8px 14px;font-size:13px;min-height:0;border-radius:10px;background:#fff;color:#a5121c;border:1.5px solid #e2b8bb;box-shadow:none}
+  .pm-kosong{padding:18px;text-align:center;color:var(--abu);font-size:14px}
+  @media (min-width:900px){ #cardDaftarPemilih{grid-column:1/-1} }
 </style>
 
 </head>
@@ -513,6 +525,15 @@
       <textarea id="daftarPemilih" rows="6" placeholder="0012345678,Budi Santoso"></textarea>
       <button onclick="tambahPemilih()">Simpan pemilih</button>
       <div id="pemilihMsg" class="ok"></div>
+    </div>
+
+    <div class="card" id="cardDaftarPemilih">
+      <h3>Daftar NISN pemilih</h3>
+      <p class="visi" id="jmlPemilih">Memuat...</p>
+      <input id="cariPemilih" type="search" inputmode="search" autocomplete="off" placeholder="Cari NISN atau nama">
+      <div id="listPemilih" class="pm-list"></div>
+      <div id="pemilihHapusMsg" class="ok"></div>
+      <button type="button" class="alt" id="btnHapusSemuaNisn" onclick="hapusSemuaPemilih()" style="color:#a5121c;margin-top:12px">Hapus semua NISN</button>
     </div>
 
     <button class="alt" onclick="keluar()">Keluar</button>
@@ -766,7 +787,7 @@
     db.ref('kandidat').on('value', s => { kandidatData = s.val() || {}; renderAdmin(); renderFotoUmum(); });
     db.ref('pengaturan/fotoPengumuman').on('value', s => { fotoUmum = s.val() || {}; renderFotoUmum(); }, () => {});
     db.ref('suara').on('value', s => { suaraData = s.val() || {}; renderAdmin(); });
-    db.ref('pemilih').on('value', s => { pemilihData = s.val() || {}; renderAdmin(); });
+    db.ref('pemilih').on('value', s => { pemilihData = s.val() || {}; renderAdmin(); renderPemilih(); });
   }
 
   function renderAdmin(){
@@ -1110,6 +1131,52 @@
       $('pemilihMsg').textContent = 'Gagal menyimpan. Coba lagi.';
     }
   }
+
+  /* ===== DAFTAR NISN: tampil + hapus ===== */
+  function renderPemilih(){
+    const box=$('listPemilih'); if(!box) return;
+    const q=($('cariPemilih').value||'').trim().toLowerCase();
+    const semua=Object.entries(pemilihData).sort((a,b)=>a[0].localeCompare(b[0]));
+    const sudah=semua.filter(([,p])=>p&&p.sudah).length;
+    $('jmlPemilih').textContent=semua.length+' pemilih terdaftar \u00b7 '+sudah+' sudah memilih \u00b7 '+(semua.length-sudah)+' belum';
+    const f=semua.filter(([n,p])=>!q||n.includes(q)||String((p&&p.nama)||'').toLowerCase().includes(q));
+    box.textContent='';
+    if(!f.length){ const d=document.createElement('div'); d.className='pm-kosong'; d.textContent=semua.length?'Tidak ada yang cocok.':'Belum ada pemilih terdaftar.'; box.appendChild(d); return; }
+    f.slice(0,500).forEach(([n,p])=>{
+      const r=document.createElement('div'); r.className='pm-row';
+      const a=document.createElement('span'); a.className='pm-nisn'; a.textContent=n;
+      const b=document.createElement('span'); b.className='pm-nama'; b.textContent=(p&&p.nama)||'(tanpa nama)';
+      const c=document.createElement('span'); const sdh=!!(p&&p.sudah); c.className='pm-st'+(sdh?' sudah':''); c.textContent=sdh?'Sudah memilih':'Belum';
+      const h=document.createElement('button'); h.type='button'; h.className='pm-hapus'; h.textContent='Hapus'; h.dataset.nisn=n;
+      r.append(a,b,c,h); box.appendChild(r);
+    });
+    if(f.length>500){ const d=document.createElement('div'); d.className='pm-kosong'; d.textContent='Menampilkan 500 pertama dari '+f.length+'. Pakai kolom cari untuk menyaring.'; box.appendChild(d); }
+  }
+  async function hapusPemilih(nisn){
+    const p=pemilihData[nisn]||{}, msgEl=$('pemilihHapusMsg'); msgEl.textContent='';
+    let m='Hapus NISN '+nisn+(p.nama?' ('+p.nama+')':'')+' dari daftar pemilih?';
+    if(p.sudah) m+='\n\nSiswa ini sudah memilih. Suaranya tetap tersimpan (tanpa NISN) dan tidak ikut terhapus.';
+    if(!confirm(m)) return;
+    try{ await db.ref('pemilih/'+nisn).remove(); msgEl.textContent='NISN '+nisn+' dihapus.'; }
+    catch(e){ msgEl.textContent=e&&e.code==='PERMISSION_DENIED'?'Gagal: akun ini tidak punya izin menghapus di database. Cek Firebase Rules.':'Gagal menghapus. Cek koneksi internet lalu coba lagi.'; }
+  }
+  async function hapusSemuaPemilih(){
+    const msgEl=$('pemilihHapusMsg'); msgEl.textContent='';
+    const daftar=Object.keys(pemilihData);
+    if(!daftar.length){ msgEl.textContent='Tidak ada NISN untuk dihapus.'; return; }
+    const j=prompt('Semua '+daftar.length+' NISN pemilih akan dihapus dari daftar. Suara yang sudah masuk tidak ikut terhapus. Data tidak bisa dikembalikan.\n\nKetik HAPUS untuk melanjutkan.');
+    if(j===null) return;
+    if(j.trim().toUpperCase()!=='HAPUS'){ msgEl.textContent='Dibatalkan: kata HAPUS tidak diketik dengan benar.'; return; }
+    try{
+      for(let i=0;i<daftar.length;i+=400){
+        const upd={}; daftar.slice(i,i+400).forEach(n=>{ upd['pemilih/'+n]=null; });
+        await db.ref().update(upd);
+      }
+      msgEl.textContent='Selesai. '+daftar.length+' NISN dihapus.';
+    }catch(e){ msgEl.textContent=e&&e.code==='PERMISSION_DENIED'?'Gagal: akun ini tidak punya izin menghapus di database. Cek Firebase Rules.':'Gagal menghapus. Cek koneksi internet lalu coba lagi.'; }
+  }
+  $('cariPemilih').addEventListener('input',renderPemilih);
+  $('listPemilih').addEventListener('click',e=>{ const b=e.target.closest('button[data-nisn]'); if(b) hapusPemilih(b.dataset.nisn); });
 
   /* ===== RESET UJI COBA ===== */
   async function resetData(hapusKandidatJuga){
