@@ -416,6 +416,27 @@
   .debu i:nth-child(5){animation-delay:1s;width:22px;height:12px}
   @keyframes awan{0%{opacity:0;transform:translate(0,0) scale(.4)}15%{opacity:1}70%{opacity:1}100%{opacity:0;transform:translate(-40px,-20px) scale(1)}}
   @keyframes debuAktif{0%,45%{opacity:1}45.1%,50%{opacity:0}50.1%,95%{opacity:1}95.1%,100%{opacity:0}}
+
+  /* ===== LOGO KIRI-KANAN sejajar dengan lebar kartu di semua tampilan (laptop/desktop) ===== */
+  :root{--lm:480px}
+  @media (min-width:900px){
+    body:has(#adminView:not(.hide)),body:has(#voteView:not(.hide)){--lm:1080px}
+    body:has(#pantauView:not(.hide)){--lm:760px}
+  }
+  @media (min-width:492px){
+    .pojok{width:min(calc(var(--lm) - 32px),calc(100% + 12px));margin-left:auto;margin-right:auto}
+  }
+
+  /* ===== TOMBOL LAYAR PENUH ===== */
+  #btnFs{position:fixed;z-index:60;right:calc(14px + env(safe-area-inset-right));bottom:calc(14px + env(safe-area-inset-bottom));
+    display:flex;align-items:center;justify-content:center;width:46px;height:46px;min-height:0;margin:0;padding:0;border-radius:50%;
+    color:#fff;background:linear-gradient(180deg,rgba(207,38,48,.95),rgba(70,5,10,.95));
+    box-shadow:0 10px 22px -8px rgba(70,5,10,.7),0 0 0 2px rgba(235,210,155,.6)}
+  #btnFs svg{display:block;width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+  #btnFs .ikKecil{display:none}
+  #btnFs.aktif .ikBesar{display:none}#btnFs.aktif .ikKecil{display:block}
+  #btnFs::after{display:none}
+  body:has(#panggung:not(.hide)) #btnFs,body:has(#zoomBox:not(.hide)) #btnFs{display:none}
 </style>
 
 </head>
@@ -1396,6 +1417,28 @@
     pgLagu=new Audio(URL.createObjectURL(f)); pgLagu.loop=true;
     $('namaLagu').textContent='Lagu terpilih: '+f.name;
   };
+</script>
+<button id="btnFs" type="button" class="hide" aria-label="Layar penuh" title="Layar penuh">
+  <svg class="ikBesar" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>
+  <svg class="ikKecil" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/></svg>
+</button>
+<script>
+  /* Tombol layar penuh: muncul hanya jika browser mendukung (Chrome Android & desktop; iPhone Safari tidak mendukung) */
+  (function(){
+    var b=document.getElementById('btnFs'), de=document.documentElement;
+    var req=de.requestFullscreen||de.webkitRequestFullscreen;
+    if(!b||!req||document.fullscreenEnabled===false) return;
+    b.classList.remove('hide');
+    function aktif(){ return document.fullscreenElement||document.webkitFullscreenElement; }
+    b.onclick=function(){
+      try{
+        if(aktif()){ (document.exitFullscreen||document.webkitExitFullscreen).call(document); }
+        else{ var r=req.call(de,{navigationUI:'hide'}); if(r&&r.catch) r.catch(function(){}); }
+      }catch(e){}
+    };
+    function ubah(){ var a=!!aktif(); b.classList.toggle('aktif',a); b.setAttribute('aria-label',a?'Keluar layar penuh':'Layar penuh'); b.title=b.getAttribute('aria-label'); }
+    document.addEventListener('fullscreenchange',ubah); document.addEventListener('webkitfullscreenchange',ubah);
+  })();
 </script>
 </body>
 </html>
