@@ -581,7 +581,7 @@
     </div>
 
     <button class="alt" onclick="keluar()">Keluar</button>
-    <p style="text-align:center;font-size:12px;color:var(--abu);margin:6px 0 0">Versi tampilan 21 Nov 2026 &middot; v5 (layout pengumuman podium)</p>
+    <p style="text-align:center;font-size:12px;color:var(--abu);margin:6px 0 0">Versi tampilan 21 Nov 2026 &middot; v5.1 (HP, perbaikan kirim suara)</p>
   </section>
 
   <section id="pantauView" class="hide">
@@ -785,23 +785,40 @@
     if(!Object.keys(data).length) box.appendChild(el('p', 'Belum ada kandidat.'));
   }
 
+  let sedangKirim = false;
   async function kirimSuara(){
+    if(sedangKirim) return;
     const pilih = document.querySelector('input[name=k]:checked');
     if(!pilih){ alert('Pilih salah satu kandidat.'); return; }
     if(!confirm('Yakin memilih ' + pilih.dataset.nama + '? Pilihan tidak bisa diubah.')) return;
+    const tombol = document.querySelector('#voteView > button');
+    const nisn = currentNisn;
+    sedangKirim = true;
+    tombol.disabled = true; tombol.textContent = 'Mengirim... jangan tutup halaman';
     try{
-      // transaction: hanya satu HP yang bisa menandai NISN ini sudah memilih
-      const res = await db.ref('pemilih/' + currentNisn + '/sudah')
-        .transaction(v => v === true ? undefined : true);
-      if(!res.committed){ alert('NISN ini sudah memilih.'); show('loginView'); return; }
-      await db.ref('suara').push({
+      // tanda "sudah memilih" dan suara dikirim SEKALIGUS: dua-duanya tersimpan atau dua-duanya gagal.
+      // Rules database hanya mengizinkan "sudah" berubah dari false ke true, jadi satu NISN tidak bisa memilih dua kali.
+      const upd = {};
+      upd['pemilih/' + nisn + '/sudah'] = true;
+      upd['suara/' + db.ref('suara').push().key] = {
         kandidat: pilih.value,
         waktu: firebase.database.ServerValue.TIMESTAMP
-      });
+      };
+      await db.ref().update(upd);
       show('doneView');
     }catch(e){
-      alert('Gagal mengirim suara. Coba lagi.');
+      // cari tahu penyebabnya supaya pesannya jelas
+      let sudah = false, status = 'buka';
+      try{
+        sudah = (await db.ref('pemilih/' + nisn + '/sudah').once('value')).val() === true;
+        status = (await db.ref('pengaturan/status').once('value')).val();
+      }catch(x){}
+      if(sudah){ alert('NISN ini sudah memilih.'); show('loginView'); }
+      else if(status !== 'buka'){ alert('Pemilihan sudah ditutup. Suara tidak terkirim.'); show('loginView'); }
+      else alert('Gagal mengirim suara. Coba lagi.');
     }
+    sedangKirim = false;
+    tombol.disabled = false; tombol.textContent = 'Kirim suara';
   }
 
   function keluar(){
